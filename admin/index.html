@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Girişi - Bütçe Dostu</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .login-box h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .login-box p {
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group .input-wrap {
+            position: relative;
+        }
+
+        .form-group .input-wrap i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+        }
+
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box" id="login-box">
+        <div class="login-logo">
+            <i class="fas fa-store"></i>
+        </div>
+        <h2>Admin Girişi</h2>
+        <p>Bütçe Dostu Yönetim Paneli</p>
+
+        <div class="error-msg" id="error-msg">
+            <i class="fas fa-exclamation-circle"></i> Kullanıcı adı veya şifre hatalı!
+        </div>
+
+        <form onsubmit="girisYap(event)">
+            <div class="form-group">
+                <label>Kullanıcı Adı</label>
+                <div class="input-wrap">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="kullanici" placeholder="Kullanıcı adınız" required autocomplete="off">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Şifre</label>
+                <div class="input-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="sifre" placeholder="Şifreniz" required>
+                    <i class="fas fa-eye toggle-pass" onclick="sifreGoster()"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Giriş Yap
+            </button>
+        </form>
+
+        <a href="../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Ana Siteye Dön
+        </a>
+    </div>
+
+    <script>
+        // Admin bilgileri - değiştirmek için buradan düzenleyin
+        const ADMIN_KULLANICI = 'admin';
+        const ADMIN_SIFRE = '4782190';
+
+        // Zaten giriş yapılmışsa direkt panele yönlendir
+        if (sessionStorage.getItem('admin_giris') === 'true') {
+            window.location.href = 'panel.html';
+        }
+
+        function girisYap(event) {
+            event.preventDefault();
+
+            const kullanici = document.getElementById('kullanici').value;
+            const sifre = document.getElementById('sifre').value;
+            const errorMsg = document.getElementById('error-msg');
+            const loginBox = document.getElementById('login-box');
+
+            if (kullanici === ADMIN_KULLANICI && sifre === ADMIN_SIFRE) {
+                // Giriş başarılı
+                sessionStorage.setItem('admin_giris', 'true');
+                window.location.href = 'panel.html';
+            } else {
+                // Hatalı giriş
+                errorMsg.style.display = 'block';
+                loginBox.classList.add('shake');
+                setTimeout(() => loginBox.classList.remove('shake'), 400);
+            }
+        }
+
+        function sifreGoster() {
+            const sifreInput = document.getElementById('sifre');
+            const icon = document.querySelector('.toggle-pass');
+
+            if (sifreInput.type === 'password') {
+                sifreInput.type = 'text';
+                icon.className = 'fas fa-eye-slash toggle-pass';
+            } else {
+                sifreInput.type = 'password';
+                icon.className = 'fas fa-eye toggle-pass';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Bütçe Dostu</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-store"></i>
+                <h3>Admin Panel</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" onclick="showPage('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#urunler" class="nav-item" onclick="showPage('urunler')">
+                    <i class="fas fa-box"></i>
+                    <span>Ürünler</span>
+                </a>
+                <a href="#kullanicilar" class="nav-item" onclick="showPage('kullanicilar')">
+                    <i class="fas fa-users"></i>
+                    <span>Kullanıcılar</span>
+                </a>
+                <a href="#ayarlar" class="nav-item" onclick="showPage('ayarlar')">
+                    <i class="fas fa-cog"></i>
+                    <span>Ayarlar</span>
+                </a>
+                <a href="../index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Ana Siteye Dön</span>
+                </a>
+                <a href="#" class="nav-item" onclick="cikisYap()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Çıkış Yap</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="admin-user">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <!-- Dashboard -->
+            <div id="dashboard" class="page active">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-urunler">0</h3>
+                            <p>Toplam Ürün</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-saticilar">0</h3>
+                            <p>Satıcı</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="ev-urunleri">0</h3>
+                            <p>Ev İlanı</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="araba-urunleri">0</h3>
+                            <p>Araba İlanı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="recent-products">
+                        <h3>Son Eklenen Ürünler</h3>
+                        <div class="recent-list" id="recent-products-list">
+                            <!-- Son ürünler buraya gelecek -->
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Hızlı İşlemler</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="yeniUrunEkle()">
+                                <i class="fas fa-plus"></i>
+                                Yeni Ürün Ekle
+                            </button>
+                            <button class="action-btn" onclick="showPage('urunler')">
+                                <i class="fas fa-list"></i>
+                                Ürünleri Yönet
+                            </button>
+                            <button class="action-btn" onclick="showPage('ayarlar')">
+                                <i class="fas fa-cog"></i>
+                                Ayarlar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ürünler -->
+            <div id="urunler" class="page">
+                <div class="page-header">
+                    <h2>Ürün Yönetimi</h2>
+                    <button class="btn-primary" onclick="yeniUrunEkle()">
+                        <i class="fas fa-plus"></i> Yeni Ürün Ekle
+                    </button>
+                </div>
+
+                <div class="filters">
+                    <select id="kategori-filter">
+                        <option value="">Tüm Kategoriler</option>
+                        <option value="ev">Ev</option>
+                        <option value="arsa">Arsa</option>
+                        <option value="araba">Araba</option>
+                        <option value="diger">Diğer</option>
+                    </select>
+                    <input type="text" id="urun-arama" placeholder="Ürün ara...">
+                    <button onclick="urunFiltrele()">Filtrele</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ürün Adı</th>
+                                <th>Kategori</th>
+                                <th>Fiyat</th>
+                                <th>Satıcı</th>
+                                <th>Tarih</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="urunler-table">
+                            <!-- Ürünler buraya gelecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Kullanıcılar -->
+            <div id="kullanicilar" class="page">
+                <div class="page-header">
+                    <h2>Kullanıcı Yönetimi</h2>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Satıcı Adı</th>
+                                <th>Telefon</th>
+                                <th>Ürün Sayısı</th>
+                                <th>Son Ürün</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kullanicilar-table">
+                            <!-- Kullanıcılar buraya gelecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ayarlar -->
+            <div id="ayarlar" class="page">
+                <div class="page-header">
+                    <h2>Site Ayarları</h2>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Genel Ayarlar</h3>
+                        <div class="form-group">
+                            <label>Site Başlığı</label>
+                            <input type="text" id="site-baslik" value="Bütçe Dostu Satış Platformu">
+                        </div>
+                        <div class="form-group">
+                            <label>Site Açıklaması</label>
+                            <textarea id="site-aciklama">Ev, arsa, araba ve daha fazlası... Aradığınız her şeyi bulun!</textarea>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>İletişim Bilgileri</h3>
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input type="tel" id="site-telefon" value="+90 555 123 45 67">
+                        </div>
+                        <div class="form-group">
+                            <label>E-posta</label>
+                            <input type="email" id="site-email" value="info@butcedostu.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Adres</label>
+                            <textarea id="site-adres">Merkez Mah. Ticaret Sok. No:123 İstanbul</textarea>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button class="btn-primary" onclick="ayarlariKaydet()">
+                            <i class="fas fa-save"></i> Ayarları Kaydet
+                        </button>
+                        <button class="btn-secondary" onclick="ayarlariSifirla()">
+                            <i class="fas fa-undo"></i> Sıfırla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürün Ekleme/Düzenleme Modal -->
+    <div id="urun-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Yeni Ürün Ekle</h3>
+                <span class="close" onclick="modalKapat()">&times;</span>
+            </div>
+            <form class="admin-form" onsubmit="urunKaydet(event)">
+                <input type="hidden" id="edit-id" value="">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select name="kategori" required>
+                            <option value="">Kategori Seçin</option>
+                            <option value="ev">Ev</option>
+                            <option value="arsa">Arsa</option>
+                            <option value="araba">Araba</option>
+                            <option value="diger">Diğer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fiyat (₺)</label>
+                        <input type="number" name="fiyat" placeholder="Fiyat" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ürün Adı</label>
+                    <input type="text" name="baslik" placeholder="Ürün adı" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Konum</label>
+                    <input type="text" name="konum" placeholder="İl, İlçe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea name="aciklama" rows="4" placeholder="Ürün açıklaması" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Satıcı Adı</label>
+                        <input type="text" name="satici" placeholder="Satıcı adı" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="tel" name="telefon" placeholder="Telefon numarası" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Fotoğraf URL'si</label>
+                    <input type="url" name="foto" placeholder="Fotoğraf linki (opsiyonel)">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="modalKapat()">
+                        İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        // Giriş kontrolü - giriş yapılmamışsa login sayfasına yönlendir
+        if (sessionStorage.getItem('admin_giris') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

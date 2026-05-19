@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bütçe Dostu Satış Platformu</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <span>Bütçe Dostu</span>
+            </div>
+            <nav class="nav">
+                <a href="#anasayfa">Ana Sayfa</a>
+                <a href="#urunler">Ürünler</a>
+                <a href="#hakkimizda">Hakkımızda</a>
+                <a href="#iletisim">İletişim</a>
+                <a href="admin/index.html" class="admin-btn">Admin</a>
+            </nav>
+            <button class="btn-primary" onclick="urunEkleModal()">
+                <i class="fas fa-plus"></i> Ürün Ekle
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Her Şey Burada, Uygun Fiyatlarla!</h1>
+            <p>Ev, arsa, araba ve daha fazlası... Aradığınız her şeyi bulun!</p>
+            
+            <!-- Arama Kutusu -->
+            <div class="search-box">
+                <select id="kategori">
+                    <option value="">Tüm Kategoriler</option>
+                    <option value="ev">Ev</option>
+                    <option value="arsa">Arsa</option>
+                    <option value="araba">Araba</option>
+                    <option value="diger">Diğer</option>
+                </select>
+                <input type="text" id="arama" placeholder="Ne arıyorsunuz?">
+                <input type="number" id="min-fiyat" placeholder="Min Fiyat">
+                <input type="number" id="max-fiyat" placeholder="Max Fiyat">
+                <button onclick="aramaYap()">
+                    <i class="fas fa-search"></i> Ara
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kategoriler -->
+    <section class="kategoriler">
+        <div class="container">
+            <h2>Kategoriler</h2>
+            <div class="kategori-grid">
+                <div class="kategori-kart" onclick="kategoriFiltre('ev')">
+                    <i class="fas fa-home"></i>
+                    <h3>Ev</h3>
+                    <p id="ev-sayisi">0 ürün</p>
+                </div>
+                <div class="kategori-kart" onclick="kategoriFiltre('arsa')">
+                    <i class="fas fa-map"></i>
+                    <h3>Arsa</h3>
+                    <p id="arsa-sayisi">0 ürün</p>
+                </div>
+                <div class="kategori-kart" onclick="kategoriFiltre('araba')">
+                    <i class="fas fa-car"></i>
+                    <h3>Araba</h3>
+                    <p id="araba-sayisi">0 ürün</p>
+                </div>
+                <div class="kategori-kart" onclick="kategoriFiltre('diger')">
+                    <i class="fas fa-box"></i>
+                    <h3>Diğer</h3>
+                    <p id="diger-sayisi">0 ürün</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ürünler -->
+    <section id="urunler" class="urunler">
+        <div class="container">
+            <div class="section-header">
+                <h2>Öne Çıkan Ürünler</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="tumunuGoster()">Tümü</button>
+                    <button class="filter-btn" onclick="kategoriFiltre('ev')">Ev</button>
+                    <button class="filter-btn" onclick="kategoriFiltre('arsa')">Arsa</button>
+                    <button class="filter-btn" onclick="kategoriFiltre('araba')">Araba</button>
+                    <button class="filter-btn" onclick="kategoriFiltre('diger')">Diğer</button>
+                </div>
+            </div>
+            
+            <div class="urun-grid" id="urun-grid">
+                <!-- Ürünler JavaScript ile yüklenecek -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Hakkımızda -->
+    <section id="hakkimizda" class="hakkimizda">
+        <div class="container">
+            <div class="hakkimizda-content">
+                <div class="hakkimizda-text">
+                    <h2>Bütçe Dostu Hakkında</h2>
+                    <p>2020 yılından beri faaliyet gösteren platformumuzda, herkesin bütçesine uygun ürünler bulabilirsiniz. Ev, arsa, araba ve daha birçok kategoride güvenilir alışveriş deneyimi sunuyoruz.</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Güvenilir Satıcılar</li>
+                        <li><i class="fas fa-check"></i> Uygun Fiyatlar</li>
+                        <li><i class="fas fa-check"></i> Geniş Ürün Yelpazesi</li>
+                        <li><i class="fas fa-check"></i> 7/24 Destek</li>
+                    </ul>
+                </div>
+                <div class="hakkimizda-image">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500" alt="Hakkımızda">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- İletişim -->
+    <section id="iletisim" class="iletisim">
+        <div class="container">
+            <h2>İletişim</h2>
+            <div class="iletisim-grid">
+                <div class="iletisim-info">
+                    <div class="iletisim-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telefon</h4>
+                            <p>+90 555 123 45 67</p>
+                        </div>
+                    </div>
+                    <div class="iletisim-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>E-posta</h4>
+                            <p>info@butcedostu.com</p>
+                        </div>
+                    </div>
+                    <div class="iletisim-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Adres</h4>
+                            <p>Merkez Mah. Ticaret Sok. No:123 İstanbul</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="iletisim-form" onsubmit="mesajGonder(event)">
+                    <input type="text" placeholder="Adınız Soyadınız" required>
+                    <input type="email" placeholder="E-posta Adresiniz" required>
+                    <input type="tel" placeholder="Telefon Numaranız" required>
+                    <textarea placeholder="Mesajınız" rows="5" required></textarea>
+                    <button type="submit" class="btn-primary">Mesaj Gönder</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Bütçe Dostu</h3>
+                    <p>Aradığınız her şeyi uygun fiyatlarla bulabileceğiniz platform.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Kategoriler</h4>
+                    <ul>
+                        <li><a href="#">Ev</a></li>
+                        <li><a href="#">Arsa</a></li>
+                        <li><a href="#">Araba</a></li>
+                        <li><a href="#">Diğer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hızlı Linkler</h4>
+                    <ul>
+                        <li><a href="#anasayfa">Ana Sayfa</a></li>
+                        <li><a href="#urunler">Ürünler</a></li>
+                        <li><a href="#hakkimizda">Hakkımızda</a></li>
+                        <li><a href="#iletisim">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <p><i class="fas fa-phone"></i> +90 555 123 45 67</p>
+                    <p><i class="fas fa-envelope"></i> info@butcedostu.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Bütçe Dostu. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Ürün Ekleme Modal -->
+    <div id="urun-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni Ürün Ekle</h3>
+                <span class="close" onclick="modalKapat()">&times;</span>
+            </div>
+            <form class="urun-form" onsubmit="urunEkle(event)">
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select name="kategori" required>
+                        <option value="">Kategori Seçin</option>
+                        <option value="ev">Ev</option>
+                        <option value="arsa">Arsa</option>
+                        <option value="araba">Araba</option>
+                        <option value="diger">Diğer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ürün Adı</label>
+                    <input type="text" name="baslik" placeholder="Ürün adı" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Konum</label>
+                        <input type="text" name="konum" placeholder="İl, İlçe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fiyat (₺)</label>
+                        <input type="number" name="fiyat" placeholder="Fiyat" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea name="aciklama" rows="4" placeholder="Ürün açıklaması" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>İletişim Telefonu</label>
+                        <input type="tel" name="telefon" placeholder="Telefon numarası" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Satıcı Adı</label>
+                        <input type="text" name="satici" placeholder="Adınız Soyadınız" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Fotoğraf URL'si (Opsiyonel)</label>
+                    <input type="url" name="foto" placeholder="Fotoğraf linki">
+                </div>
+                
+                <button type="submit" class="btn-primary">Ürün Ekle</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
