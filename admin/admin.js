@@ -191,6 +191,24 @@ function urunDuzenle(id) {
     var onizleme = document.getElementById('admin-foto-onizleme');
     if (onizleme) onizleme.innerHTML = '';
 
+    // Mevcut fotoğrafları göster
+    var mevcutFotolar = urun.fotolar || (urun.foto ? [urun.foto] : []);
+    mevcutFotolar.forEach(function(url) {
+        if (url) {
+            var idx = adminYuklenenFotolar.length;
+            adminYuklenenFotolar.push(url);
+            var item = document.createElement('div');
+            item.className = 'foto-onizleme-item';
+            item.id = 'admin-foto-item-' + idx;
+            item.innerHTML =
+                '<img src="' + url + '" alt="foto" onerror="this.src=\'https://via.placeholder.com/100x100?text=Hata\'">' +
+                '<button type="button" class="foto-sil" onclick="adminFotoyuSil(' + idx + ')">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>';
+            onizleme.appendChild(item);
+        }
+    });
+
     document.getElementById('urun-modal').style.display = 'block';
 }
 
@@ -290,35 +308,27 @@ function urunFiltrele() {
 }
 
 // =====================
-// FOTOĞRAF YÜKLEME
+// FOTOĞRAF URL EKLEME
 // =====================
-function adminFotolariOku(input) {
-    var dosyalar = Array.from(input.files);
+function urlFotoEkle() {
+    var input = document.getElementById('foto-url-input');
+    var url = input.value.trim();
+    if (!url) { showNotification('Lütfen bir URL girin!', 'warning'); return; }
+
+    var idx = adminYuklenenFotolar.length;
+    adminYuklenenFotolar.push(url);
+
     var onizleme = document.getElementById('admin-foto-onizleme');
-
-    dosyalar.forEach(function(dosya) {
-        if (dosya.size > 5 * 1024 * 1024) {
-            showNotification(dosya.name + ' 5MB\'dan büyük!', 'warning');
-            return;
-        }
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var base64 = e.target.result;
-            var idx = adminYuklenenFotolar.length;
-            adminYuklenenFotolar.push(base64);
-
-            var item = document.createElement('div');
-            item.className = 'foto-onizleme-item';
-            item.id = 'admin-foto-item-' + idx;
-            item.innerHTML =
-                '<img src="' + base64 + '" alt="foto">' +
-                '<button type="button" class="foto-sil" onclick="adminFotoyuSil(' + idx + ')">' +
-                    '<i class="fas fa-times"></i>' +
-                '</button>';
-            onizleme.appendChild(item);
-        };
-        reader.readAsDataURL(dosya);
-    });
+    var item = document.createElement('div');
+    item.className = 'foto-onizleme-item';
+    item.id = 'admin-foto-item-' + idx;
+    item.innerHTML =
+        '<img src="' + url + '" alt="foto" onerror="this.src=\'https://via.placeholder.com/100x100?text=Hata\'">' +
+        '<button type="button" class="foto-sil" onclick="adminFotoyuSil(' + idx + ')">' +
+            '<i class="fas fa-times"></i>' +
+        '</button>';
+    onizleme.appendChild(item);
+    input.value = '';
 }
 
 function adminFotoyuSil(idx) {

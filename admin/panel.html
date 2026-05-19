@@ -294,13 +294,16 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Fotoğraflar (Bilgisayardan Seç)</label>
-                    <div class="foto-yukle-alani" onclick="document.getElementById('admin-foto-input').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Tıkla veya sürükle bırak</p>
-                        <span>JPG, PNG, WEBP - Max 5MB</span>
+                    <label>Fotoğraf URL'leri</label>
+                    <div class="url-ekle-alani">
+                        <div style="display:flex;gap:8px;margin-bottom:8px;">
+                            <input type="text" id="foto-url-input" placeholder="https://... resim linki yapıştır" style="flex:1;">
+                            <button type="button" class="btn-primary" onclick="urlFotoEkle()" style="padding:10px 16px;white-space:nowrap;">
+                                <i class="fas fa-plus"></i> Ekle
+                            </button>
+                        </div>
+                        <small style="color:#888;">Imgur, Google Drive veya herhangi bir resim linki yapıştırabilirsin.</small>
                     </div>
-                    <input type="file" id="admin-foto-input" accept="image/*" multiple style="display:none" onchange="adminFotolariOku(this)">
                     <div class="foto-onizleme" id="admin-foto-onizleme"></div>
                 </div>
                 
