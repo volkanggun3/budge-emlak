@@ -163,17 +163,84 @@ function aramaYap() {
 // =====================
 // ÜRÜN DETAY
 // =====================
+var aktifSliderIndex = 0;
+var aktifSliderResimler = [];
+
 function urunDetay(id) {
     var urun = urunler.find(function(u) { return u.id === id; });
     if (!urun) return;
-    alert(
-        urun.baslik + '\n' +
-        'Konum: ' + urun.konum + '\n' +
-        'Fiyat: ' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺\n\n' +
-        urun.aciklama + '\n\n' +
-        'Satıcı: ' + urun.satici + '\n' +
-        'Tel: ' + urun.telefon
-    );
+
+    // Başlık ve bilgiler
+    document.getElementById('detay-baslik').textContent = urun.baslik;
+    document.getElementById('detay-konum').textContent = urun.konum;
+    document.getElementById('detay-fiyat').textContent = Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺';
+    document.getElementById('detay-aciklama').textContent = urun.aciklama || '-';
+    document.getElementById('detay-satici').textContent = urun.satici;
+
+    var tel = urun.telefon || '';
+    document.getElementById('detay-telefon').href = 'tel:' + tel;
+    document.getElementById('detay-telefon').innerHTML = '<i class="fas fa-phone"></i> ' + tel;
+    document.getElementById('detay-whatsapp').href = 'https://wa.me/' + tel.replace(/[^0-9]/g, '');
+
+    // Resimler
+    aktifSliderResimler = [];
+    if (urun.fotolar && urun.fotolar.length > 0) {
+        aktifSliderResimler = urun.fotolar.filter(Boolean);
+    } else if (urun.foto) {
+        aktifSliderResimler = [urun.foto];
+    } else {
+        aktifSliderResimler = [varsayilanFoto(urun.kategori)];
+    }
+
+    aktifSliderIndex = 0;
+    sliderRender();
+
+    document.getElementById('detay-modal').style.display = 'block';
+}
+
+function sliderRender() {
+    var resimlerDiv = document.getElementById('detay-slider-resimler');
+    var noktalarDiv = document.getElementById('detay-slider-noktalar');
+    var oklar = document.querySelectorAll('.detay-slider-ok');
+
+    resimlerDiv.innerHTML = '';
+    noktalarDiv.innerHTML = '';
+
+    aktifSliderResimler.forEach(function(src, i) {
+        var img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Resim ' + (i + 1);
+        if (i === aktifSliderIndex) img.classList.add('aktif');
+        resimlerDiv.appendChild(img);
+
+        var nokta = document.createElement('button');
+        nokta.className = 'detay-nokta' + (i === aktifSliderIndex ? ' aktif' : '');
+        nokta.onclick = (function(idx) { return function() { sliderGo(idx); }; })(i);
+        noktalarDiv.appendChild(nokta);
+    });
+
+    // Tek resimse okları gizle
+    oklar.forEach(function(ok) {
+        ok.style.display = aktifSliderResimler.length > 1 ? 'flex' : 'none';
+    });
+    noktalarDiv.style.display = aktifSliderResimler.length > 1 ? 'flex' : 'none';
+}
+
+function sliderGit(yon) {
+    aktifSliderIndex = (aktifSliderIndex + yon + aktifSliderResimler.length) % aktifSliderResimler.length;
+    sliderGo(aktifSliderIndex);
+}
+
+function sliderGo(idx) {
+    aktifSliderIndex = idx;
+    var resimler = document.querySelectorAll('#detay-slider-resimler img');
+    var noktalar = document.querySelectorAll('.detay-nokta');
+    resimler.forEach(function(img, i) { img.classList.toggle('aktif', i === idx); });
+    noktalar.forEach(function(n, i) { n.classList.toggle('aktif', i === idx); });
+}
+
+function detayKapat() {
+    document.getElementById('detay-modal').style.display = 'none';
 }
 
 // =====================
@@ -295,5 +362,12 @@ function varsayilanFoto(kategori) {
 }
 
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') modalKapat();
+    if (e.key === 'Escape') { modalKapat(); detayKapat(); }
+});
+
+window.addEventListener('click', function(e) {
+    var modal = document.getElementById('urun-modal');
+    if (e.target === modal) modalKapat();
+    var detayModal = document.getElementById('detay-modal');
+    if (e.target === detayModal) detayKapat();
 });

@@ -276,5 +276,39 @@
     </div>
 
     <script src="script.js"></script>
+
+    <!-- Ürün Detay Modal -->
+    <div id="detay-modal" class="modal">
+        <div class="modal-content" style="max-width:750px;">
+            <div class="modal-header">
+                <h3 id="detay-baslik"></h3>
+                <span class="close" onclick="detayKapat()">&times;</span>
+            </div>
+            <div class="detay-icerik">
+                <!-- Resim Slider -->
+                <div class="detay-slider" id="detay-slider">
+                    <div class="detay-slider-resimler" id="detay-slider-resimler"></div>
+                    <button class="detay-slider-ok sol" onclick="sliderGit(-1)">&#8249;</button>
+                    <button class="detay-slider-ok sag" onclick="sliderGit(1)">&#8250;</button>
+                    <div class="detay-slider-noktalar" id="detay-slider-noktalar"></div>
+                </div>
+                <!-- Bilgiler -->
+                <div class="detay-bilgiler">
+                    <div class="detay-satir"><i class="fas fa-map-marker-alt"></i> <span id="detay-konum"></span></div>
+                    <div class="detay-satir detay-fiyat"><i class="fas fa-tag"></i> <span id="detay-fiyat"></span></div>
+                    <div class="detay-satir"><i class="fas fa-align-left"></i> <span id="detay-aciklama"></span></div>
+                    <div class="detay-satir"><i class="fas fa-user"></i> <span id="detay-satici"></span></div>
+                    <div class="detay-satir">
+                        <a id="detay-telefon" href="#" class="btn-primary" style="text-decoration:none;">
+                            <i class="fas fa-phone"></i> Ara
+                        </a>
+                        <a id="detay-whatsapp" href="#" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#25d366,#128c7e);text-decoration:none;margin-left:10px;">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
