@@ -265,6 +265,8 @@ function urunKaydet(event) {
     const formData = new FormData(form);
     const editId = document.getElementById('edit-id').value;
     
+    const gecerliFotolar = adminYuklenenFotolar.filter(f => f !== null);
+
     const urunData = {
         kategori: formData.get('kategori'),
         baslik: formData.get('baslik'),
@@ -273,7 +275,8 @@ function urunKaydet(event) {
         aciklama: formData.get('aciklama'),
         satici: formData.get('satici'),
         telefon: formData.get('telefon'),
-        foto: formData.get('foto') || getDefaultImage(formData.get('kategori'))
+        fotolar: gecerliFotolar.length > 0 ? gecerliFotolar : null,
+        foto: gecerliFotolar.length > 0 ? gecerliFotolar[0] : getDefaultImage(formData.get('kategori'))
     };
     
     if (editId) {
@@ -302,6 +305,10 @@ function urunKaydet(event) {
     istatistikleriGuncelle();
     sonUrunleriGoster();
     urunleriYukle();
+    
+    // Fotoğrafları sıfırla
+    adminYuklenenFotolar = [];
+    document.getElementById('admin-foto-onizleme').innerHTML = '';
     
     modalKapat();
 }
@@ -424,6 +431,45 @@ window.onclick = function(event) {
     if (event.target === modal) {
         modal.style.display = 'none';
     }
+}
+
+// Yüklenen fotoğraflar (admin)
+let adminYuklenenFotolar = [];
+
+// Fotoğrafları oku (admin)
+function adminFotolariOku(input) {
+    const dosyalar = Array.from(input.files);
+    const onizleme = document.getElementById('admin-foto-onizleme');
+    
+    dosyalar.forEach(dosya => {
+        if (dosya.size > 5 * 1024 * 1024) {
+            showNotification(`${dosya.name} 5MB'dan büyük, atlandı.`, 'warning');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64 = e.target.result;
+            adminYuklenenFotolar.push(base64);
+            
+            const item = document.createElement('div');
+            item.className = 'foto-onizleme-item';
+            const idx = adminYuklenenFotolar.length - 1;
+            item.innerHTML = `
+                <img src="${base64}" alt="Fotoğraf">
+                <button class="foto-sil" onclick="adminFotoyuSil(${idx}, this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            onizleme.appendChild(item);
+        };
+        reader.readAsDataURL(dosya);
+    });
+}
+
+function adminFotoyuSil(idx, btn) {
+    adminYuklenenFotolar[idx] = null;
+    btn.parentElement.remove();
 }
 
 // Varsayılan resim alma

@@ -81,9 +81,13 @@ function urunleriGoster(gosterilecekUrunler = null) {
             'araba': 'ARABA',
             'diger': 'DİĞER'
         };
+
+        // Fotoğraf alanı - slider veya tek resim
+        const fotolar = urun.fotolar && urun.fotolar.length > 0 ? urun.fotolar : [urun.foto];
+        const sliderHTML = sliderOlustur(fotolar, urun.id);
         
         urunKart.innerHTML = `
-            <div class="urun-resim" style="background-image: url('${urun.foto}')">
+            ${sliderHTML}
                 <div class="kategori-badge">${kategoriIsimleri[urun.kategori]}</div>
             </div>
             <div class="urun-icerik">
@@ -231,6 +235,9 @@ function urunEkle(event) {
     const form = event.target;
     const formData = new FormData(form);
     
+    // Yüklenen fotoğrafları filtrele (null olmayanlar)
+    const gecerliFotolar = yuklenenFotolar.filter(f => f !== null);
+    
     const yeniUrun = {
         id: urunler.length + 1,
         kategori: formData.get('kategori'),
@@ -241,23 +248,140 @@ function urunEkle(event) {
         telefon: formData.get('telefon'),
         satici: formData.get('satici'),
         tarih: new Date(),
-        foto: formData.get('foto') || getDefaultImage(formData.get('kategori'))
+        fotolar: gecerliFotolar.length > 0 ? gecerliFotolar : null,
+        foto: gecerliFotolar.length > 0 ? gecerliFotolar[0] : getDefaultImage(formData.get('kategori'))
     };
     
     urunler.unshift(yeniUrun);
     filtrelenmisUrunler = [...urunler];
     
+    // LocalStorage'a kaydet
+    localStorage.setItem('site_urunler', JSON.stringify(urunler));
+    
     urunleriGoster();
     kategoriSayilariGuncelle();
     
+    // Formu sıfırla
     modalKapat();
     form.reset();
+    yuklenenFotolar = [];
+    document.getElementById('foto-onizleme').innerHTML = '';
     
     alert('Ürününüz başarıyla eklendi!');
 }
 
-// Varsayılan resim al
-function getDefaultImage(kategori) {
+// Yüklenen fotoğraflar dizisi
+let yuklenenFotolar = [];
+
+// Fotoğrafları oku (ana site)
+function fotolariOku(input) {
+    const dosyalar = Array.from(input.files);
+    const onizleme = document.getElementById('foto-onizleme');
+    
+    dosyalar.forEach(dosya => {
+        if (dosya.size > 5 * 1024 * 1024) {
+            alert(`${dosya.name} dosyası 5MB'dan büyük, atlandı.`);
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64 = e.target.result;
+            yuklenenFotolar.push(base64);
+            
+            // Önizleme ekle
+            const item = document.createElement('div');
+            item.className = 'foto-onizleme-item';
+            const idx = yuklenenFotolar.length - 1;
+            item.innerHTML = `
+                <img src="${base64}" alt="Fotoğraf">
+                <button class="foto-sil" onclick="fotoyuSil(${idx}, this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            onizleme.appendChild(item);
+        };
+        reader.readAsDataURL(dosya);
+    });
+}
+
+// Fotoğraf sil
+function fotoyuSil(idx, btn) {
+    yuklenenFotolar[idx] = null;
+    btn.parentElement.remove();
+}
+
+// Ürün kartı için slider HTML oluştur
+function sliderOlustur(fotolar, urunId) {
+    if (!fotolar || fotolar.length === 0) {
+        return `<div class="urun-resim" style="background-image: url('${getDefaultImage('diger')}')">`;
+    }
+    
+    if (fotolar.length === 1) {
+        return `<div class="urun-resim" style="background-image: url('${fotolar[0]}')">`;
+    }
+    
+    const resimler = fotolar.map((f, i) => 
+        `<img src="${f}" class="${i === 0 ? 'aktif' : ''}" alt="Fotoğraf ${i+1}">`
+    ).join('');
+    
+    const noktalar = fotolar.map((f, i) => 
+        `<div class="slider-nokta ${i === 0 ? 'aktif' : ''}" onclick="sliderGit(${urunId}, ${i})"></div>`
+    ).join('');
+    
+    return `
+        <div class="urun-resim-slider" id="slider-${urunId}">
+            ${resimler}
+            ${fotolar.length > 1 ? `
+            <div class="slider-oklar">
+                <button class="slider-ok" onclick="sliderOnceki(${urunId})"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-ok" onclick="sliderSonraki(${urunId})"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="slider-noktalar">${noktalar}</div>
+            ` : ''}
+    `;
+}
+
+// Slider kontrolleri
+function sliderSonraki(urunId) {
+    const slider = document.getElementById(`slider-${urunId}`);
+    const resimler = slider.querySelectorAll('img');
+    const noktalar = slider.querySelectorAll('.slider-nokta');
+    let aktif = Array.from(resimler).findIndex(r => r.classList.contains('aktif'));
+    
+    resimler[aktif].classList.remove('aktif');
+    if (noktalar[aktif]) noktalar[aktif].classList.remove('aktif');
+    
+    aktif = (aktif + 1) % resimler.length;
+    resimler[aktif].classList.add('aktif');
+    if (noktalar[aktif]) noktalar[aktif].classList.add('aktif');
+}
+
+function sliderOnceki(urunId) {
+    const slider = document.getElementById(`slider-${urunId}`);
+    const resimler = slider.querySelectorAll('img');
+    const noktalar = slider.querySelectorAll('.slider-nokta');
+    let aktif = Array.from(resimler).findIndex(r => r.classList.contains('aktif'));
+    
+    resimler[aktif].classList.remove('aktif');
+    if (noktalar[aktif]) noktalar[aktif].classList.remove('aktif');
+    
+    aktif = (aktif - 1 + resimler.length) % resimler.length;
+    resimler[aktif].classList.add('aktif');
+    if (noktalar[aktif]) noktalar[aktif].classList.add('aktif');
+}
+
+function sliderGit(urunId, idx) {
+    const slider = document.getElementById(`slider-${urunId}`);
+    const resimler = slider.querySelectorAll('img');
+    const noktalar = slider.querySelectorAll('.slider-nokta');
+    
+    resimler.forEach(r => r.classList.remove('aktif'));
+    noktalar.forEach(n => n.classList.remove('aktif'));
+    
+    resimler[idx].classList.add('aktif');
+    if (noktalar[idx]) noktalar[idx].classList.add('aktif');
+}
     const defaultImages = {
         ev: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400',
         arsa: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400',

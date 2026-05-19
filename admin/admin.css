@@ -592,3 +592,75 @@ body {
         font-size: 0.9rem;
     }
 }
+
+/* Fotoğraf Yükleme */
+.foto-yukle-alani {
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8f9ff;
+}
+
+.foto-yukle-alani:hover {
+    background: #eef0ff;
+    border-color: #764ba2;
+}
+
+.foto-yukle-alani i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.foto-yukle-alani p {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.foto-yukle-alani span {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.foto-onizleme {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.foto-onizleme-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.foto-onizleme-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.foto-onizleme-item .foto-sil {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

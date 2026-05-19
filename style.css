@@ -661,3 +661,136 @@ body {
         padding: 1.5rem;
     }
 }
+
+/* Fotoğraf Yükleme */
+.foto-yukle-alani {
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8f9ff;
+}
+
+.foto-yukle-alani:hover {
+    background: #eef0ff;
+    border-color: #764ba2;
+}
+
+.foto-yukle-alani i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.foto-yukle-alani p {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.foto-yukle-alani span {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.foto-onizleme {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.foto-onizleme-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.foto-onizleme-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.foto-onizleme-item .foto-sil {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ürün kartı çoklu fotoğraf slider */
+.urun-resim-slider {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.urun-resim-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.urun-resim-slider img.aktif {
+    display: block;
+}
+
+.slider-oklar {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.slider-ok {
+    width: 28px;
+    height: 28px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-noktalar {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.slider-nokta {
+    width: 8px;
+    height: 8px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-nokta.aktif {
+    background: white;
+}

@@ -260,8 +260,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Fotoğraf URL'si (Opsiyonel)</label>
-                    <input type="url" name="foto" placeholder="Fotoğraf linki">
+                    <label>Fotoğraflar (Bilgisayardan Seç)</label>
+                    <div class="foto-yukle-alani" onclick="document.getElementById('foto-input').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Tıkla veya sürükle bırak</p>
+                        <span>JPG, PNG, WEBP - Max 5MB</span>
+                    </div>
+                    <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotolariOku(this)">
+                    <div class="foto-onizleme" id="foto-onizleme"></div>
                 </div>
                 
                 <button type="submit" class="btn-primary">Ürün Ekle</button>
