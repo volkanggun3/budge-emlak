@@ -1,250 +1,184 @@
-// Admin Panel JavaScript
+// =====================
+// VERİ YÖNETİMİ
+// =====================
 
-// Ana siteden ürünleri al
-let adminUrunler = [];
-let adminKullanicilar = [];
+var adminUrunler = [];
+var adminYuklenenFotolar = [];
 
-// Sayfa yüklendiğinde
-document.addEventListener('DOMContentLoaded', function() {
-    // Ana siteden verileri yükle
+document.addEventListener('DOMContentLoaded', function () {
     verileriYukle();
-    
-    // Dashboard'ı göster
     showPage('dashboard');
-    
-    // İstatistikleri güncelle
-    istatistikleriGuncelle();
-    
-    // Son ürünleri göster
-    sonUrunleriGoster();
 });
 
-// Ana siteden verileri yükle
 function verileriYukle() {
-    // LocalStorage'dan veya ana siteden veri al
-    const savedData = localStorage.getItem('site_urunler');
-    if (savedData) {
-        adminUrunler = JSON.parse(savedData);
+    var kayitli = localStorage.getItem('site_urunler');
+    if (kayitli) {
+        try {
+            adminUrunler = JSON.parse(kayitli);
+        } catch(e) {
+            adminUrunler = [];
+        }
     } else {
-        // Örnek veriler
-        adminUrunler = [
-            {
-                id: 1,
-                kategori: 'ev',
-                baslik: 'Merkez\'de Satılık 3+1 Daire',
-                konum: 'Kadıköy, İstanbul',
-                fiyat: 850000,
-                aciklama: 'Merkezi konumda, yeni yapılmış, asansörlü binada 3+1 daire.',
-                telefon: '+90 555 123 45 67',
-                satici: 'Ahmet Yılmaz',
-                tarih: new Date(),
-                foto: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'
-            },
-            {
-                id: 2,
-                kategori: 'arsa',
-                baslik: 'İmarlı Arsa - Yatırım Fırsatı',
-                konum: 'Çankaya, Ankara',
-                fiyat: 450000,
-                aciklama: 'İmarlı, yapı ruhsatlı arsa. Ana yola cepheli.',
-                telefon: '+90 555 234 56 78',
-                satici: 'Mehmet Demir',
-                tarih: new Date(),
-                foto: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'
-            },
-            {
-                id: 3,
-                kategori: 'araba',
-                baslik: '2020 Model Volkswagen Golf',
-                konum: 'Beşiktaş, İstanbul',
-                fiyat: 320000,
-                aciklama: 'Temiz kullanılmış, bakımlı araç.',
-                telefon: '+90 555 345 67 89',
-                satici: 'Ali Özkan',
-                tarih: new Date(),
-                foto: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400'
-            }
-        ];
+        adminUrunler = [];
     }
-    
-    // Kullanıcıları oluştur
-    kullanicilariOlustur();
+    istatistikleriGuncelle();
+    sonUrunleriGoster();
 }
 
-// Kullanıcıları oluştur
-function kullanicilariOlustur() {
-    const saticilar = {};
-    
-    adminUrunler.forEach(urun => {
-        if (!saticilar[urun.satici]) {
-            saticilar[urun.satici] = {
-                ad: urun.satici,
-                telefon: urun.telefon,
-                urunSayisi: 0,
-                sonUrun: null
-            };
-        }
-        saticilar[urun.satici].urunSayisi++;
-        if (!saticilar[urun.satici].sonUrun || urun.tarih > saticilar[urun.satici].sonUrun) {
-            saticilar[urun.satici].sonUrun = urun.tarih;
-        }
-    });
-    
-    adminKullanicilar = Object.values(saticilar);
-}
-
-// Sayfa gösterme
+// =====================
+// SAYFA GEÇİŞİ
+// =====================
 function showPage(pageId) {
-    // Tüm sayfaları gizle
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
+    document.querySelectorAll('.page').forEach(function(p) {
+        p.classList.remove('active');
     });
-    
-    // Seçili sayfayı göster
     document.getElementById(pageId).classList.add('active');
-    
-    // Nav item'ları güncelle
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
+
+    document.querySelectorAll('.nav-item').forEach(function(n) {
+        n.classList.remove('active');
     });
-    
-    const activeNav = document.querySelector(`[onclick="showPage('${pageId}')"]`);
-    if (activeNav) {
-        activeNav.classList.add('active');
-    }
-    
-    // Sayfa başlığını güncelle
-    const titles = {
-        'dashboard': 'Dashboard',
-        'urunler': 'Ürün Yönetimi',
-        'kullanicilar': 'Kullanıcı Yönetimi',
-        'ayarlar': 'Site Ayarları'
+    var aktif = document.querySelector('[onclick="showPage(\'' + pageId + '\')"]');
+    if (aktif) aktif.classList.add('active');
+
+    var basliklar = {
+        dashboard: 'Dashboard',
+        urunler: 'Ürün Yönetimi',
+        kullanicilar: 'Kullanıcı Yönetimi',
+        ayarlar: 'Site Ayarları'
     };
-    
-    document.getElementById('page-title').textContent = titles[pageId] || 'Admin Panel';
-    
-    // Sayfa özel yüklemeler
-    switch(pageId) {
-        case 'urunler':
-            urunleriYukle();
-            break;
-        case 'kullanicilar':
-            kullanicilariYukle();
-            break;
-    }
+    document.getElementById('page-title').textContent = basliklar[pageId] || 'Admin Panel';
+
+    if (pageId === 'urunler') urunleriYukle();
+    if (pageId === 'kullanicilar') kullanicilariYukle();
 }
 
-// İstatistikleri güncelle
+// =====================
+// İSTATİSTİKLER
+// =====================
 function istatistikleriGuncelle() {
-    const toplamUrun = adminUrunler.length;
-    const toplamSatici = adminKullanicilar.length;
-    const evUrunleri = adminUrunler.filter(u => u.kategori === 'ev').length;
-    const arabaUrunleri = adminUrunler.filter(u => u.kategori === 'araba').length;
-    
-    document.getElementById('total-urunler').textContent = toplamUrun;
-    document.getElementById('total-saticilar').textContent = toplamSatici;
-    document.getElementById('ev-urunleri').textContent = evUrunleri;
-    document.getElementById('araba-urunleri').textContent = arabaUrunleri;
+    document.getElementById('total-urunler').textContent = adminUrunler.length;
+
+    var saticilar = {};
+    adminUrunler.forEach(function(u) { saticilar[u.satici] = true; });
+    document.getElementById('total-saticilar').textContent = Object.keys(saticilar).length;
+
+    document.getElementById('ev-urunleri').textContent = adminUrunler.filter(function(u) { return u.kategori === 'ev'; }).length;
+    document.getElementById('araba-urunleri').textContent = adminUrunler.filter(function(u) { return u.kategori === 'araba'; }).length;
 }
 
-// Son ürünleri göster
+// =====================
+// SON ÜRÜNLER
+// =====================
 function sonUrunleriGoster() {
-    const sonUrunler = adminUrunler
-        .sort((a, b) => new Date(b.tarih) - new Date(a.tarih))
-        .slice(0, 5);
-    
-    const container = document.getElementById('recent-products-list');
-    
-    if (sonUrunler.length === 0) {
-        container.innerHTML = '<p style="color: #666; text-align: center;">Henüz ürün eklenmemiş.</p>';
-        return;
-    }
-    
-    container.innerHTML = sonUrunler.map(urun => `
-        <div class="recent-item">
-            <img src="${urun.foto}" alt="${urun.baslik}">
-            <div class="recent-info">
-                <h4>${urun.baslik}</h4>
-                <p>${urun.fiyat.toLocaleString('tr-TR')} ₺ - ${urun.satici}</p>
-            </div>
-        </div>
-    `).join('');
-}
+    var container = document.getElementById('recent-products-list');
+    if (!container) return;
 
-// Ürünleri yükle
-function urunleriYukle() {
-    const tbody = document.getElementById('urunler-table');
-    
-    if (adminUrunler.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">Henüz ürün eklenmemiş.</td></tr>';
+    var son = adminUrunler.slice(0, 5);
+
+    if (son.length === 0) {
+        container.innerHTML = '<p style="color:#888;text-align:center;padding:1rem;">Henüz ürün eklenmemiş.</p>';
         return;
     }
-    
-    tbody.innerHTML = adminUrunler.map(urun => {
-        const kategoriClass = `kategori-${urun.kategori}`;
-        const kategoriText = {
-            'ev': 'EV',
-            'arsa': 'ARSA',
-            'araba': 'ARABA',
-            'diger': 'DİĞER'
-        };
-        
-        return `
-            <tr>
-                <td>${urun.id}</td>
-                <td>${urun.baslik}</td>
-                <td><span class="kategori-badge ${kategoriClass}">${kategoriText[urun.kategori]}</span></td>
-                <td>${urun.fiyat.toLocaleString('tr-TR')} ₺</td>
-                <td>${urun.satici}</td>
-                <td>${new Date(urun.tarih).toLocaleDateString('tr-TR')}</td>
-                <td>
-                    <button class="btn-success" onclick="urunDuzenle(${urun.id})">Düzenle</button>
-                    <button class="btn-danger" onclick="urunSil(${urun.id})">Sil</button>
-                </td>
-            </tr>
-        `;
+
+    container.innerHTML = son.map(function(urun) {
+        var foto = (urun.fotolar && urun.fotolar.length > 0) ? urun.fotolar[0] : (urun.foto || '');
+        return '<div class="recent-item">' +
+            '<img src="' + foto + '" alt="foto" onerror="this.src=\'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=80\'">' +
+            '<div class="recent-info">' +
+                '<h4>' + urun.baslik + '</h4>' +
+                '<p>' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺ — ' + urun.satici + '</p>' +
+            '</div>' +
+        '</div>';
     }).join('');
 }
 
-// Kullanıcıları yükle
-function kullanicilariYukle() {
-    const tbody = document.getElementById('kullanicilar-table');
-    
-    if (adminKullanicilar.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #666;">Henüz kullanıcı bulunmuyor.</td></tr>';
+// =====================
+// ÜRÜNLER TABLOSU
+// =====================
+function urunleriYukle() {
+    var tbody = document.getElementById('urunler-table');
+    if (!tbody) return;
+
+    if (adminUrunler.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:2rem;">Henüz ürün eklenmemiş.</td></tr>';
         return;
     }
-    
-    tbody.innerHTML = adminKullanicilar.map(kullanici => `
-        <tr>
-            <td>${kullanici.ad}</td>
-            <td>${kullanici.telefon}</td>
-            <td>${kullanici.urunSayisi}</td>
-            <td>${kullanici.sonUrun ? new Date(kullanici.sonUrun).toLocaleDateString('tr-TR') : '-'}</td>
-            <td>
-                <button class="btn-secondary" onclick="kullaniciDetay('${kullanici.ad}')">Detay</button>
-            </td>
-        </tr>
-    `).join('');
+
+    var etiketler = { ev: 'EV', arsa: 'ARSA', araba: 'ARABA', diger: 'DİĞER' };
+    var renkler = { ev: 'kategori-ev', arsa: 'kategori-arsa', araba: 'kategori-araba', diger: 'kategori-diger' };
+
+    tbody.innerHTML = adminUrunler.map(function(urun) {
+        var tarih = urun.tarih ? new Date(urun.tarih).toLocaleDateString('tr-TR') : '-';
+        return '<tr>' +
+            '<td>' + urun.id + '</td>' +
+            '<td>' + urun.baslik + '</td>' +
+            '<td><span class="kategori-badge ' + (renkler[urun.kategori] || '') + '">' + (etiketler[urun.kategori] || 'DİĞER') + '</span></td>' +
+            '<td>' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺</td>' +
+            '<td>' + urun.satici + '</td>' +
+            '<td>' + tarih + '</td>' +
+            '<td>' +
+                '<button class="btn-success" onclick="urunDuzenle(' + urun.id + ')">Düzenle</button> ' +
+                '<button class="btn-danger" onclick="urunSil(' + urun.id + ')">Sil</button>' +
+            '</td>' +
+        '</tr>';
+    }).join('');
 }
 
-// Yeni ürün ekleme
+// =====================
+// KULLANICILAR
+// =====================
+function kullanicilariYukle() {
+    var tbody = document.getElementById('kullanicilar-table');
+    if (!tbody) return;
+
+    var saticilar = {};
+    adminUrunler.forEach(function(u) {
+        if (!saticilar[u.satici]) {
+            saticilar[u.satici] = { ad: u.satici, telefon: u.telefon, sayi: 0, son: u.tarih };
+        }
+        saticilar[u.satici].sayi++;
+    });
+
+    var liste = Object.values(saticilar);
+
+    if (liste.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:2rem;">Henüz kullanıcı yok.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = liste.map(function(k) {
+        var tarih = k.son ? new Date(k.son).toLocaleDateString('tr-TR') : '-';
+        return '<tr>' +
+            '<td>' + k.ad + '</td>' +
+            '<td>' + k.telefon + '</td>' +
+            '<td>' + k.sayi + '</td>' +
+            '<td>' + tarih + '</td>' +
+            '<td><button class="btn-secondary" onclick="alert(\'' + k.ad + ' - ' + k.sayi + ' ürün\')">Detay</button></td>' +
+        '</tr>';
+    }).join('');
+}
+
+// =====================
+// ÜRÜN EKLE / DÜZENLE
+// =====================
 function yeniUrunEkle() {
     document.getElementById('modal-title').textContent = 'Yeni Ürün Ekle';
     document.getElementById('edit-id').value = '';
     document.querySelector('.admin-form').reset();
+    adminYuklenenFotolar = [];
+    var onizleme = document.getElementById('admin-foto-onizleme');
+    if (onizleme) onizleme.innerHTML = '';
     document.getElementById('urun-modal').style.display = 'block';
 }
 
-// Ürün düzenleme
 function urunDuzenle(id) {
-    const urun = adminUrunler.find(u => u.id === id);
+    var urun = adminUrunler.find(function(u) { return u.id === id; });
     if (!urun) return;
-    
+
     document.getElementById('modal-title').textContent = 'Ürün Düzenle';
     document.getElementById('edit-id').value = id;
-    
-    const form = document.querySelector('.admin-form');
+
+    var form = document.querySelector('.admin-form');
     form.kategori.value = urun.kategori;
     form.baslik.value = urun.baslik;
     form.konum.value = urun.konum;
@@ -252,352 +186,238 @@ function urunDuzenle(id) {
     form.aciklama.value = urun.aciklama;
     form.satici.value = urun.satici;
     form.telefon.value = urun.telefon;
-    form.foto.value = urun.foto;
-    
+
+    adminYuklenenFotolar = [];
+    var onizleme = document.getElementById('admin-foto-onizleme');
+    if (onizleme) onizleme.innerHTML = '';
+
     document.getElementById('urun-modal').style.display = 'block';
 }
 
-// Ürün kaydetme
 function urunKaydet(event) {
     event.preventDefault();
-    
-    const form = event.target;
-    const formData = new FormData(form);
-    const editId = document.getElementById('edit-id').value;
-    
-    const gecerliFotolar = adminYuklenenFotolar.filter(f => f !== null);
+    var form = event.target;
+    var fd = new FormData(form);
+    var editId = document.getElementById('edit-id').value;
 
-    const urunData = {
-        kategori: formData.get('kategori'),
-        baslik: formData.get('baslik'),
-        konum: formData.get('konum'),
-        fiyat: parseInt(formData.get('fiyat')),
-        aciklama: formData.get('aciklama'),
-        satici: formData.get('satici'),
-        telefon: formData.get('telefon'),
+    var gecerliFotolar = adminYuklenenFotolar.filter(function(f) { return f !== null; });
+
+    var urunData = {
+        kategori: fd.get('kategori'),
+        baslik: fd.get('baslik'),
+        konum: fd.get('konum'),
+        fiyat: parseInt(fd.get('fiyat')),
+        aciklama: fd.get('aciklama'),
+        satici: fd.get('satici'),
+        telefon: fd.get('telefon'),
         fotolar: gecerliFotolar.length > 0 ? gecerliFotolar : null,
-        foto: gecerliFotolar.length > 0 ? gecerliFotolar[0] : getDefaultImage(formData.get('kategori'))
+        foto: gecerliFotolar.length > 0 ? gecerliFotolar[0] : varsayilanFoto(fd.get('kategori'))
     };
-    
+
     if (editId) {
-        // Düzenleme
-        const index = adminUrunler.findIndex(u => u.id === parseInt(editId));
-        if (index !== -1) {
-            adminUrunler[index] = { ...adminUrunler[index], ...urunData };
-            showNotification('Ürün başarıyla güncellendi!', 'success');
+        var idx = adminUrunler.findIndex(function(u) { return u.id === parseInt(editId); });
+        if (idx !== -1) {
+            adminUrunler[idx] = Object.assign(adminUrunler[idx], urunData);
+            showNotification('Ürün güncellendi!', 'success');
         }
     } else {
-        // Yeni ekleme
-        const yeniUrun = {
-            id: Math.max(...adminUrunler.map(u => u.id), 0) + 1,
-            ...urunData,
-            tarih: new Date()
-        };
-        adminUrunler.unshift(yeniUrun);
-        showNotification('Ürün başarıyla eklendi!', 'success');
+        urunData.id = Date.now();
+        urunData.tarih = new Date().toISOString();
+        adminUrunler.unshift(urunData);
+        showNotification('Ürün eklendi!', 'success');
     }
-    
-    // Verileri kaydet
+
     localStorage.setItem('site_urunler', JSON.stringify(adminUrunler));
-    
-    // Sayfaları güncelle
-    kullanicilariOlustur();
+
     istatistikleriGuncelle();
     sonUrunleriGoster();
     urunleriYukle();
-    
-    // Fotoğrafları sıfırla
+
     adminYuklenenFotolar = [];
-    document.getElementById('admin-foto-onizleme').innerHTML = '';
-    
+    var onizleme = document.getElementById('admin-foto-onizleme');
+    if (onizleme) onizleme.innerHTML = '';
+
     modalKapat();
 }
 
-// Ürün silme
 function urunSil(id) {
-    if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
-        adminUrunler = adminUrunler.filter(u => u.id !== id);
-        localStorage.setItem('site_urunler', JSON.stringify(adminUrunler));
-        
-        kullanicilariOlustur();
-        istatistikleriGuncelle();
-        sonUrunleriGoster();
-        urunleriYukle();
-        
-        showNotification('Ürün başarıyla silindi!', 'success');
-    }
+    if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
+    adminUrunler = adminUrunler.filter(function(u) { return u.id !== id; });
+    localStorage.setItem('site_urunler', JSON.stringify(adminUrunler));
+    istatistikleriGuncelle();
+    sonUrunleriGoster();
+    urunleriYukle();
+    showNotification('Ürün silindi!', 'success');
 }
 
-// Ürün filtreleme
+// =====================
+// ÜRÜN FİLTRE
+// =====================
 function urunFiltrele() {
-    const kategori = document.getElementById('kategori-filter').value;
-    const arama = document.getElementById('urun-arama').value.toLowerCase();
-    
-    let filtreliUrunler = [...adminUrunler];
-    
-    if (kategori) {
-        filtreliUrunler = filtreliUrunler.filter(u => u.kategori === kategori);
-    }
-    
-    if (arama) {
-        filtreliUrunler = filtreliUrunler.filter(u => 
-            u.baslik.toLowerCase().includes(arama) ||
-            u.satici.toLowerCase().includes(arama) ||
-            u.konum.toLowerCase().includes(arama)
-        );
-    }
-    
-    // Filtrelenmiş sonuçları göster
-    const tbody = document.getElementById('urunler-table');
-    
-    if (filtreliUrunler.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">Arama kriterlerine uygun ürün bulunamadı.</td></tr>';
+    var kategori = document.getElementById('kategori-filter').value;
+    var arama = document.getElementById('urun-arama').value.toLowerCase();
+
+    var liste = adminUrunler.filter(function(u) {
+        var k = !kategori || u.kategori === kategori;
+        var a = !arama || u.baslik.toLowerCase().includes(arama) || u.satici.toLowerCase().includes(arama);
+        return k && a;
+    });
+
+    var etiketler = { ev: 'EV', arsa: 'ARSA', araba: 'ARABA', diger: 'DİĞER' };
+    var renkler = { ev: 'kategori-ev', arsa: 'kategori-arsa', araba: 'kategori-araba', diger: 'kategori-diger' };
+    var tbody = document.getElementById('urunler-table');
+
+    if (liste.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:2rem;">Sonuç bulunamadı.</td></tr>';
         return;
     }
-    
-    tbody.innerHTML = filtreliUrunler.map(urun => {
-        const kategoriClass = `kategori-${urun.kategori}`;
-        const kategoriText = {
-            'ev': 'EV',
-            'arsa': 'ARSA',
-            'araba': 'ARABA',
-            'diger': 'DİĞER'
-        };
-        
-        return `
-            <tr>
-                <td>${urun.id}</td>
-                <td>${urun.baslik}</td>
-                <td><span class="kategori-badge ${kategoriClass}">${kategoriText[urun.kategori]}</span></td>
-                <td>${urun.fiyat.toLocaleString('tr-TR')} ₺</td>
-                <td>${urun.satici}</td>
-                <td>${new Date(urun.tarih).toLocaleDateString('tr-TR')}</td>
-                <td>
-                    <button class="btn-success" onclick="urunDuzenle(${urun.id})">Düzenle</button>
-                    <button class="btn-danger" onclick="urunSil(${urun.id})">Sil</button>
-                </td>
-            </tr>
-        `;
+
+    tbody.innerHTML = liste.map(function(urun) {
+        var tarih = urun.tarih ? new Date(urun.tarih).toLocaleDateString('tr-TR') : '-';
+        return '<tr>' +
+            '<td>' + urun.id + '</td>' +
+            '<td>' + urun.baslik + '</td>' +
+            '<td><span class="kategori-badge ' + (renkler[urun.kategori] || '') + '">' + (etiketler[urun.kategori] || 'DİĞER') + '</span></td>' +
+            '<td>' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺</td>' +
+            '<td>' + urun.satici + '</td>' +
+            '<td>' + tarih + '</td>' +
+            '<td>' +
+                '<button class="btn-success" onclick="urunDuzenle(' + urun.id + ')">Düzenle</button> ' +
+                '<button class="btn-danger" onclick="urunSil(' + urun.id + ')">Sil</button>' +
+            '</td>' +
+        '</tr>';
     }).join('');
 }
 
-// Kullanıcı detayı
-function kullaniciDetay(ad) {
-    const kullaniciUrunleri = adminUrunler.filter(u => u.satici === ad);
-    const detay = `Kullanıcı: ${ad}
-Toplam Ürün: ${kullaniciUrunleri.length}
-Ürünler: ${kullaniciUrunleri.map(u => u.baslik).join(', ')}`;
-    
-    alert(detay);
-}
-
-// Ayarları kaydetme
-function ayarlariKaydet() {
-    const ayarlar = {
-        baslik: document.getElementById('site-baslik').value,
-        aciklama: document.getElementById('site-aciklama').value,
-        telefon: document.getElementById('site-telefon').value,
-        email: document.getElementById('site-email').value,
-        adres: document.getElementById('site-adres').value
-    };
-    
-    localStorage.setItem('site_ayarlar', JSON.stringify(ayarlar));
-    showNotification('Ayarlar başarıyla kaydedildi!', 'success');
-}
-
-// Ayarları sıfırlama
-function ayarlariSifirla() {
-    if (confirm('Tüm ayarları varsayılan değerlere sıfırlamak istediğinizden emin misiniz?')) {
-        localStorage.removeItem('site_ayarlar');
-        
-        document.getElementById('site-baslik').value = 'Bütçe Dostu Satış Platformu';
-        document.getElementById('site-aciklama').value = 'Ev, arsa, araba ve daha fazlası... Aradığınız her şeyi bulun!';
-        document.getElementById('site-telefon').value = '+90 555 123 45 67';
-        document.getElementById('site-email').value = 'info@butcedostu.com';
-        document.getElementById('site-adres').value = 'Merkez Mah. Ticaret Sok. No:123 İstanbul';
-        
-        showNotification('Ayarlar sıfırlandı!', 'info');
-    }
-}
-
-// Modal kapatma
-function modalKapat() {
-    document.getElementById('urun-modal').style.display = 'none';
-}
-
-// Modal dışına tıklayınca kapatma
-window.onclick = function(event) {
-    const modal = document.getElementById('urun-modal');
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Yüklenen fotoğraflar (admin)
-let adminYuklenenFotolar = [];
-
-// Fotoğrafları oku (admin)
+// =====================
+// FOTOĞRAF YÜKLEME
+// =====================
 function adminFotolariOku(input) {
-    const dosyalar = Array.from(input.files);
-    const onizleme = document.getElementById('admin-foto-onizleme');
-    
-    dosyalar.forEach(dosya => {
+    var dosyalar = Array.from(input.files);
+    var onizleme = document.getElementById('admin-foto-onizleme');
+
+    dosyalar.forEach(function(dosya) {
         if (dosya.size > 5 * 1024 * 1024) {
-            showNotification(`${dosya.name} 5MB'dan büyük, atlandı.`, 'warning');
+            showNotification(dosya.name + ' 5MB\'dan büyük!', 'warning');
             return;
         }
-        
-        const reader = new FileReader();
+        var reader = new FileReader();
         reader.onload = function(e) {
-            const base64 = e.target.result;
+            var base64 = e.target.result;
+            var idx = adminYuklenenFotolar.length;
             adminYuklenenFotolar.push(base64);
-            
-            const item = document.createElement('div');
+
+            var item = document.createElement('div');
             item.className = 'foto-onizleme-item';
-            const idx = adminYuklenenFotolar.length - 1;
-            item.innerHTML = `
-                <img src="${base64}" alt="Fotoğraf">
-                <button class="foto-sil" onclick="adminFotoyuSil(${idx}, this)">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
+            item.id = 'admin-foto-item-' + idx;
+            item.innerHTML =
+                '<img src="' + base64 + '" alt="foto">' +
+                '<button type="button" class="foto-sil" onclick="adminFotoyuSil(' + idx + ')">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>';
             onizleme.appendChild(item);
         };
         reader.readAsDataURL(dosya);
     });
 }
 
-function adminFotoyuSil(idx, btn) {
+function adminFotoyuSil(idx) {
     adminYuklenenFotolar[idx] = null;
-    btn.parentElement.remove();
+    var item = document.getElementById('admin-foto-item-' + idx);
+    if (item) item.remove();
 }
 
-// Varsayılan resim alma
-function getDefaultImage(kategori) {
-    const defaultImages = {
+// =====================
+// AYARLAR
+// =====================
+function ayarlariKaydet() {
+    var ayarlar = {
+        baslik: document.getElementById('site-baslik').value,
+        aciklama: document.getElementById('site-aciklama').value,
+        telefon: document.getElementById('site-telefon').value,
+        email: document.getElementById('site-email').value,
+        adres: document.getElementById('site-adres').value
+    };
+    localStorage.setItem('site_ayarlar', JSON.stringify(ayarlar));
+    showNotification('Ayarlar kaydedildi!', 'success');
+}
+
+function ayarlariSifirla() {
+    if (!confirm('Ayarları sıfırlamak istediğinizden emin misiniz?')) return;
+    localStorage.removeItem('site_ayarlar');
+    location.reload();
+}
+
+// =====================
+// ÇIKIŞ
+// =====================
+function cikisYap() {
+    if (!confirm('Çıkış yapmak istediğinizden emin misiniz?')) return;
+    sessionStorage.removeItem('admin_giris');
+    window.location.href = 'index.html';
+}
+
+// =====================
+// MODAL
+// =====================
+function modalKapat() {
+    document.getElementById('urun-modal').style.display = 'none';
+}
+
+window.addEventListener('click', function(e) {
+    var modal = document.getElementById('urun-modal');
+    if (e.target === modal) modalKapat();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') modalKapat();
+    if (e.ctrlKey && e.key === 'n') { e.preventDefault(); yeniUrunEkle(); }
+});
+
+// =====================
+// BİLDİRİM
+// =====================
+function showNotification(mesaj, tip) {
+    document.querySelectorAll('.notif').forEach(function(n) { n.remove(); });
+
+    var renkler = {
+        success: 'linear-gradient(135deg,#28a745,#20c997)',
+        warning: 'linear-gradient(135deg,#ffc107,#fd7e14)',
+        info: 'linear-gradient(135deg,#17a2b8,#6f42c1)'
+    };
+
+    var div = document.createElement('div');
+    div.className = 'notif';
+    div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;background:' + (renkler[tip] || renkler.info) + ';color:white;padding:15px 20px;border-radius:10px;font-weight:600;box-shadow:0 5px 15px rgba(0,0,0,0.2);';
+    div.textContent = mesaj;
+    document.body.appendChild(div);
+    setTimeout(function() { div.remove(); }, 3000);
+}
+
+// =====================
+// YARDIMCI
+// =====================
+function varsayilanFoto(kategori) {
+    var fotolar = {
         ev: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400',
         arsa: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400',
         araba: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400',
         diger: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400'
     };
-    
-    return defaultImages[kategori] || defaultImages.diger;
+    return fotolar[kategori] || fotolar.diger;
 }
-
-// Bildirim gösterme
-function showNotification(message, type = 'info') {
-    // Mevcut bildirimleri temizle
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(n => n.remove());
-
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-            <span>${message}</span>
-            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-    
-    // CSS ekle (eğer yoksa)
-    if (!document.querySelector('#notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 3000;
-                min-width: 300px;
-                max-width: 400px;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                animation: slideInRight 0.3s ease-out;
-            }
-            .notification-content {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 15px 20px;
-                color: white;
-                font-weight: 600;
-            }
-            .notification-success {
-                background: linear-gradient(135deg, #28a745, #20c997);
-            }
-            .notification-warning {
-                background: linear-gradient(135deg, #ffc107, #fd7e14);
-            }
-            .notification-info {
-                background: linear-gradient(135deg, #17a2b8, #6f42c1);
-            }
-            .notification-close {
-                background: none;
-                border: none;
-                color: white;
-                cursor: pointer;
-                padding: 5px;
-                margin-left: auto;
-                border-radius: 50%;
-                transition: background-color 0.3s;
-            }
-            .notification-close:hover {
-                background-color: rgba(255,255,255,0.2);
-            }
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    document.body.appendChild(notification);
-    
-    // 5 saniye sonra otomatik kapat
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Çıkış yapma
-function cikisYap() {
-    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        sessionStorage.removeItem('admin_giris');
-        window.location.href = 'index.html';
-    }
-}
-
-// Klavye kısayolları
-document.addEventListener('keydown', function(e) {
-    // ESC tuşu ile modal kapatma
-    if (e.key === 'Escape') {
-        modalKapat();
-    }
-    
-    // Ctrl + N ile yeni ürün
-    if (e.ctrlKey && e.key === 'n') {
-        e.preventDefault();
-        yeniUrunEkle();
-    }
-});
 
 // Sayfa yüklendiğinde ayarları yükle
 window.addEventListener('load', function() {
-    const savedSettings = localStorage.getItem('site_ayarlar');
-    if (savedSettings) {
-        const ayarlar = JSON.parse(savedSettings);
-        
-        document.getElementById('site-baslik').value = ayarlar.baslik || 'Bütçe Dostu Satış Platformu';
-        document.getElementById('site-aciklama').value = ayarlar.aciklama || 'Ev, arsa, araba ve daha fazlası...';
-        document.getElementById('site-telefon').value = ayarlar.telefon || '+90 555 123 45 67';
-        document.getElementById('site-email').value = ayarlar.email || 'info@butcedostu.com';
-        document.getElementById('site-adres').value = ayarlar.adres || 'Merkez Mah. Ticaret Sok. No:123 İstanbul';
+    var s = localStorage.getItem('site_ayarlar');
+    if (s) {
+        try {
+            var ayarlar = JSON.parse(s);
+            if (document.getElementById('site-baslik')) document.getElementById('site-baslik').value = ayarlar.baslik || '';
+            if (document.getElementById('site-aciklama')) document.getElementById('site-aciklama').value = ayarlar.aciklama || '';
+            if (document.getElementById('site-telefon')) document.getElementById('site-telefon').value = ayarlar.telefon || '';
+            if (document.getElementById('site-email')) document.getElementById('site-email').value = ayarlar.email || '';
+            if (document.getElementById('site-adres')) document.getElementById('site-adres').value = ayarlar.adres || '';
+        } catch(e) {}
     }
 });
