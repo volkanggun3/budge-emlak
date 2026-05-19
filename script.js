@@ -5,40 +5,16 @@
 // Varsayılan örnek ürünler
 const ornekUrunler = [
     {
-        id: 1,
-        kategori: 'ev',
-        baslik: "Merkez'de Satılık 3+1 Daire",
-        konum: 'Kadıköy, İstanbul',
-        fiyat: 850000,
-        aciklama: 'Merkezi konumda, yeni yapılmış, asansörlü binada 3+1 daire. Deniz manzaralı.',
-        telefon: '+90 555 123 45 67',
-        satici: 'Ahmet Yılmaz',
+        id: 1779199334150,
+        kategori: 'diger',
+        baslik: 'MENEMEN YANIKKÖY 194 M2 OLAN TARLALARIMIZ',
+        konum: 'Menemen, İzmir',
+        fiyat: 720,
+        aciklama: '',
+        telefon: '+90 546 199 21 90',
+        satici: 'VOLKAN GÜZELGÜN',
         tarih: new Date().toISOString(),
-        foto: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'
-    },
-    {
-        id: 2,
-        kategori: 'arsa',
-        baslik: 'İmarlı Arsa - Yatırım Fırsatı',
-        konum: 'Çankaya, Ankara',
-        fiyat: 450000,
-        aciklama: 'İmarlı, yapı ruhsatlı arsa. Ana yola cepheli, elektrik ve su mevcut.',
-        telefon: '+90 555 234 56 78',
-        satici: 'Mehmet Demir',
-        tarih: new Date().toISOString(),
-        foto: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'
-    },
-    {
-        id: 3,
-        kategori: 'araba',
-        baslik: '2020 Model Volkswagen Golf',
-        konum: 'Beşiktaş, İstanbul',
-        fiyat: 320000,
-        aciklama: 'Temiz kullanılmış, bakımlı araç. Hasar kaydı yok, tek elden.',
-        telefon: '+90 555 345 67 89',
-        satici: 'Ali Özkan',
-        tarih: new Date().toISOString(),
-        foto: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400'
+        foto: ''
     }
 ];
 
@@ -47,7 +23,15 @@ function urunleriYukle() {
     const kayitli = localStorage.getItem('site_urunler');
     if (kayitli) {
         try {
-            return JSON.parse(kayitli);
+            const parsed = JSON.parse(kayitli);
+            // Eski örnek ürünler varsa temizle (id 1,2,3 olanlar)
+            const eskiIds = [1, 2, 3];
+            const temiz = parsed.filter(u => !eskiIds.includes(u.id));
+            if (temiz.length !== parsed.length) {
+                localStorage.setItem('site_urunler', JSON.stringify(temiz));
+                return temiz.length ? temiz : ornekUrunler;
+            }
+            return parsed;
         } catch(e) {
             return ornekUrunler;
         }
