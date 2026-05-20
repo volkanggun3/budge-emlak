@@ -89,6 +89,14 @@ function urunleriGoster(liste) {
                     '<a href="tel:' + urun.telefon + '" class="telefon-link"><i class="fas fa-phone"></i> ' + urun.telefon + '</a>' +
                     '<button class="btn-primary" onclick="urunDetay(' + urun.id + ')">Detay</button>' +
                 '</div>' +
+                '<div class="paylasim-alani">' +
+                    '<button class="paylas-btn" onclick="event.stopPropagation();paylasimAc(' + urun.id + ', this)"><i class="fas fa-share-alt"></i> Paylaş</button>' +
+                    '<div class="paylas-menu" id="paylas-' + urun.id + '" style="display:none;">' +
+                        '<a class="paylas-item" href="https://wa.me/?text=' + encodeURIComponent(urun.baslik + ' - ' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺ - ' + urun.konum + ' - ' + window.location.href) + '" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>' +
+                        '<a class="paylas-item" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href) + '" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>' +
+                        '<button class="paylas-item" onclick="linkkopyala(\'' + urun.id + '\')"><i class="fas fa-link"></i> Linki Kopyala</button>' +
+                    '</div>' +
+                '</div>' +
             '</div>';
 
         grid.appendChild(div);
@@ -370,4 +378,77 @@ window.addEventListener('click', function(e) {
     if (e.target === modal) modalKapat();
     var detayModal = document.getElementById('detay-modal');
     if (e.target === detayModal) detayKapat();
+});
+
+// =====================
+// PAYLAŞIM
+// =====================
+function paylasimAc(id, btn) {
+    // Diğer açık menüleri kapat
+    document.querySelectorAll('.paylas-menu').forEach(function(m) {
+        if (m.id !== 'paylas-' + id) m.style.display = 'none';
+    });
+    var menu = document.getElementById('paylas-' + id);
+    if (menu) {
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function linkkopyala(id) {
+    var url = window.location.href.split('#')[0] + '#urunler';
+    navigator.clipboard.writeText(url).then(function() {
+        showKopyalandi();
+    }).catch(function() {
+        // Eski tarayıcılar için
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showKopyalandi();
+    });
+    var menu = document.getElementById('paylas-' + id);
+    if (menu) menu.style.display = 'none';
+}
+
+function showKopyalandi() {
+    var t = document.getElementById('kopyalandi-toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'kopyalandi-toast';
+        t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:25px;font-weight:600;z-index:9999;font-size:0.95rem;';
+        document.body.appendChild(t);
+    }
+    t.textContent = '✓ Link kopyalandı!';
+    t.style.display = 'block';
+    setTimeout(function() { t.style.display = 'none'; }, 2500);
+}
+
+// Dışarı tıklayınca paylaşım menüsünü kapat
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.paylasim-alani')) {
+        document.querySelectorAll('.paylas-menu').forEach(function(m) {
+            m.style.display = 'none';
+        });
+    }
+});
+
+// Hamburger menü
+function menuToggle() {
+    var nav = document.getElementById('main-nav');
+    var btn = document.getElementById('hamburger-btn');
+    nav.classList.toggle('acik');
+    btn.innerHTML = nav.classList.contains('acik')
+        ? '<i class="fas fa-times"></i>'
+        : '<i class="fas fa-bars"></i>';
+}
+
+// Menü linkine tıklayınca kapat
+document.querySelectorAll('#main-nav a').forEach(function(a) {
+    a.addEventListener('click', function() {
+        var nav = document.getElementById('main-nav');
+        nav.classList.remove('acik');
+        document.getElementById('hamburger-btn').innerHTML = '<i class="fas fa-bars"></i>';
+    });
 });
