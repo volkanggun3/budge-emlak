@@ -190,6 +190,15 @@ function urunDetay(id) {
     document.getElementById('detay-telefon').innerHTML = '<i class="fas fa-phone"></i> ' + tel;
     document.getElementById('detay-whatsapp').href = 'https://wa.me/' + tel.replace(/[^0-9]/g, '');
 
+    // Paylaşım menüsü içeriğini güncelle
+    var paylasMesaj = urun.baslik + ' - ' + Number(urun.fiyat).toLocaleString('tr-TR') + ' ₺ - ' + urun.konum + '\n' + window.location.href;
+    var paylasMenu = document.getElementById('detay-paylas-menu');
+    paylasMenu.style.display = 'none';
+    paylasMenu.innerHTML =
+        '<a class="paylas-item" href="https://wa.me/?text=' + encodeURIComponent(paylasMesaj) + '" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp ile Paylaş</a>' +
+        '<a class="paylas-item" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href) + '" target="_blank"><i class="fab fa-facebook"></i> Facebook ile Paylaş</a>' +
+        '<button class="paylas-item" onclick="linkkopyala(\'detay\')"><i class="fas fa-link"></i> Linki Kopyala</button>';
+
     // Resimler
     aktifSliderResimler = [];
     if (urun.fotolar && urun.fotolar.length > 0) {
@@ -379,6 +388,11 @@ window.addEventListener('click', function(e) {
     var detayModal = document.getElementById('detay-modal');
     if (e.target === detayModal) detayKapat();
 });
+
+function detayPaylasimAc() {
+    var menu = document.getElementById('detay-paylas-menu');
+    if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
 
 // =====================
 // PAYLAŞIM
