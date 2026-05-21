@@ -403,13 +403,7 @@ function mesajGonder(event) {
 // YARDIMCI
 // =====================
 function varsayilanFoto(kategori) {
-    var fotolar = {
-        ev: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400',
-        arsa: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400',
-        araba: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400',
-        diger: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400'
-    };
-    return fotolar[kategori] || fotolar.diger;
+    return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect width="400" height="200" fill="%23e9ecef"/><text x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" fill="%23aaa">Fotoğraf Yok</text></svg>';
 }
 
 document.addEventListener('keydown', function(e) {
