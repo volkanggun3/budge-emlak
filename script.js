@@ -5,16 +5,67 @@
 // Varsayılan örnek ürünler
 const ornekUrunler = [
     {
+        id: 1779225232676,
+        kategori: 'diger',
+        baslik: 'yeni bağarası 322 m2',
+        konum: 'İZMİR foça',
+        fiyat: 900,
+        aciklama: 'Foça Yenibağarası\'nda, hem yatırımlık hem de hemen kullanıma uygun, bölgenin en kupon konumunda bulunan yerimiz acil ihtiyaçtan dolayı piyasa değerinin altında satılıktır.\nÖne Çıkan Özellikleri:\n araçla bile içine kadar rahatça girilebilir durumdadır.\nHazır Konum: Çevresinde aktif yaşam vardır. Uydu haritasında da göründüğü gibi Delice Doğa Evi ve Bizim Taş Ev gibi lüks yapıların hemen komşusudur.\nKullanım Amacı: Tiny House (tekerlekli ev), karavan koymaya, hafta sonu bahçesi yapmaya veya kısa-orta vadede yüksek prim yapacak bir yatırım arayanlar için kaçırılmayacak fırsattır.',
+        satici: 'VOLKAN GÜZELGÜN',
+        telefon: '05461992190',
+        fotolar: [
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779225255/PHOTO-2026-05-19-23-50-53_5_zfjjdn.jpg',
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779225255/PHOTO-2026-05-19-23-50-53_3_ewrovc.jpg',
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779225255/PHOTO-2026-05-19-23-50-53_7_agixs3.jpg'
+        ],
+        foto: 'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779225255/PHOTO-2026-05-19-23-50-53_5_zfjjdn.jpg',
+        tarih: '2026-05-19T21:13:52.676Z'
+    },
+    {
+        id: 1779215342396,
+        kategori: 'diger',
+        baslik: 'MENEMEN GÖKTEPE',
+        konum: 'İZMİR MENEMEN',
+        fiyat: 2,
+        aciklama: 'Menemen Göktepe\'de Satılık 177m2 ve 300m2 yerlerimiz\nMenemen Göktepe mevkiinde, 300 ve 177 büyüklüğünde, tarlalarımız satılıktır.\nDüzenli yapılaşmanın bulunduğu, villaların yoğun olduğu, her geçen gün değer kazanan bir lokasyondadır.\nVilla yatırımı veya kendi yaşam alanını oluşturmak isteyenler için kaçırılmayacak bir fırsattır.\n177M2 670     300   1650',
+        satici: 'VOLKAN GÜZELGÜN',
+        telefon: '05461992190',
+        fotolar: [
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779213556/PHOTO-2026-05-17-16-27-33_gwl33s.jpg'
+        ],
+        foto: 'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779213556/PHOTO-2026-05-17-16-27-33_gwl33s.jpg',
+        tarih: '2026-05-19T18:29:02.396Z'
+    },
+    {
+        id: 1779205613414,
+        kategori: 'diger',
+        baslik: 'EMİRALEM PİKNİK ALANI KARŞISI BANKO YER',
+        konum: 'İZMİR MENEMEN',
+        fiyat: 770,
+        aciklama: 'EMİRALEM PİKNİK ALANI KARŞISI BANKO YER\n\n255 m2  890\n205 m2 780',
+        satici: 'VOLKAN GÜZELGÜN',
+        telefon: '05461992190',
+        fotolar: [
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/f_auto,q_auto/PHOTO-2026-05-17-19-45-10_4_u8gkpb',
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/f_auto,q_auto/PHOTO-2026-05-17-19-45-09_1_ql0eks',
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779212801/PHOTO-2026-05-17-19-45-09_dxvbcf.jpg',
+            'https://res.cloudinary.com/duvwm9dmf/image/upload/v1779212801/PHOTO-2026-05-17-19-45-10_ymvi0w.jpg'
+        ],
+        foto: 'https://res.cloudinary.com/duvwm9dmf/image/upload/f_auto,q_auto/PHOTO-2026-05-17-19-45-10_4_u8gkpb',
+        tarih: '2026-05-19T15:46:53.414Z'
+    },
+    {
         id: 1779199334150,
         kategori: 'diger',
         baslik: 'MENEMEN YANIKKÖY 194 M2 OLAN TARLALARIMIZ',
-        konum: 'Menemen, İzmir',
+        konum: 'İZMİR MENEMEN',
         fiyat: 720,
-        aciklama: '',
-        telefon: '+90 546 199 21 90',
+        aciklama: 'İZMİR MENEMEN',
         satici: 'VOLKAN GÜZELGÜN',
-        tarih: new Date().toISOString(),
-        foto: ''
+        telefon: '05461992190',
+        fotolar: [],
+        foto: '',
+        tarih: '2026-05-19T00:00:00.000Z'
     }
 ];
 
