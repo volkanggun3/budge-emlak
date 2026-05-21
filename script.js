@@ -69,25 +69,8 @@ const ornekUrunler = [
     }
 ];
 
-// Ürünleri localStorage'dan yükle, yoksa örnek verileri kullan
+// Ürünleri yükle - her zaman ornekUrunler'i kullan (localStorage'ı yoksay)
 function urunleriYukle() {
-    const kayitli = localStorage.getItem('site_urunler');
-    if (kayitli) {
-        try {
-            const parsed = JSON.parse(kayitli);
-            // Eski örnek ürünler varsa temizle (id 1,2,3 olanlar)
-            const eskiIds = [1, 2, 3];
-            const temiz = parsed.filter(u => !eskiIds.includes(u.id));
-            if (temiz.length !== parsed.length) {
-                localStorage.setItem('site_urunler', JSON.stringify(temiz));
-                return temiz.length ? temiz : ornekUrunler;
-            }
-            return parsed;
-        } catch(e) {
-            return ornekUrunler;
-        }
-    }
-    // İlk açılışta örnek verileri kaydet
     localStorage.setItem('site_urunler', JSON.stringify(ornekUrunler));
     return ornekUrunler;
 }
